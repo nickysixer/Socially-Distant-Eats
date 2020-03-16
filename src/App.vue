@@ -1,42 +1,49 @@
 <template lang="pug">
    #app.app.app__page.app__page--home
-      .app__loading(v-if="isLoading")
-         h3
-            i.fad.fa-spin.fa-spinner
-            span Loading restaurants
-      main.app__workbench(v-else)
-         .filters
-            .filters__filter.filters__filter--search
-               .filters__input.filters__input--text
-                  input(v-model="filters.search.input", type="search", placeholder="Search by name")
-            .filters__filter.filters__filter--city
-               .filters__input.filters__input--select
-                  select(v-model="filters.city.input", type="search", placeholder="Search by name")
-                     option(value="") Select a City
-                     option(v-for="(filter, key) in filters.city.options") {{ filter }}
-            .filters__filter.filters__filter--service
-               label.filters__input.filters__input--checkbox
-                  input(v-model="filters.service.input", value="", type="radio", checked="true")
-                  span.filters__pill
-                     i.fad.fa-check-circle
-                     span All
-               label.filters__input.filters__input--checkbox(v-for="(filter, key) in filters.service.options")
-                  input(v-model="filters.service.input", :value="key", type="radio", checked="true")
-                  span.filters__pill
-                     i.fad.fa-check-circle
-                     span {{ filter }}
-            .filters__filter.filters__filter--reset(v-if="isFiltered")
-               .filters__input.filters__input--button
-                  button.btn(@click.prevent="reset") Clear Search
+      header.app__masthead
+         img.app__logo(src="images/SociallyDistantEatsLogo-Color.png")
+         .app__menu
+            a(href="https://forms.gle/xsGyRzzcSFPqTK5P9", target="_blank")
+               i.fad.fa-plus-circle
+               span Submit Your Business
+      main.app__workbench
+         .app__loading(v-if="isLoading")
+            h3
+               i.fad.fa-spin.fa-spinner
+               span Loading restaurants
+         template(v-else)
+            .filters
+               .filters__filter.filters__filter--service
+                  label.filters__input.filters__input--checkbox
+                     input(v-model="filters.service.input", value="", type="radio", checked="true")
+                     span.filters__pill
+                        i.fad.fa-check-circle
+                        span All
+                  label.filters__input.filters__input--checkbox(v-for="(filter, key) in filters.service.options")
+                     input(v-model="filters.service.input", :value="key", type="radio", checked="true")
+                     span.filters__pill
+                        i.fad.fa-check-circle
+                        span {{ filter }}
+               .filters__filter.filters__filter--search
+                  .filters__input.filters__input--text
+                     input(v-model="filters.search.input", type="search", placeholder="Search by name")
+               .filters__filter.filters__filter--city
+                  .filters__input.filters__input--select
+                     select(v-model="filters.city.input", type="search", placeholder="Search by name")
+                        option(value="") Search by city
+                        option(v-for="(filter, key) in filters.city.options") {{ filter }}
+               .filters__filter.filters__filter--reset(v-if="isFiltered")
+                  .filters__input.filters__input--button
+                     button.btn(@click.prevent="reset") Clear Search
 
-         .directory
-            masonry.directory__list(v-if="restaurants", :cols="{default: 3, 1024: 2, 680: 1}", :gutter="30")
-               .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
-                  business-component(:business="restaurant")
-            .directory__empty(v-else)
-               h2 Sorry, we were unable to find any restaurants that matched your search.
-               button.btn(@click.prevent="reset") Reset Search
-      footer.bottom
+            .directory
+               masonry.directory__list(v-if="restaurants", :cols="{default: 3, 1024: 2, 680: 1}", :gutter="30")
+                  .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
+                     business-component(:business="restaurant")
+               .directory__empty(v-else)
+                  h2 Sorry, we were unable to find any restaurants that matched your search.
+                  button.btn(@click.prevent="reset") Reset Search
+      footer.app__bottom
          span(v-html="attribution")
 </template>
 
@@ -201,17 +208,51 @@ html,
 	margin: 3rem 0;
 
 	&__loading {
-		text-align: center;
-
 		i {
 			margin-right: 0.5rem;
 		}
 	}
 
-	&__workbench {
+	&__masthead,
+	&__workbench,
+	&__bottom {
 		margin: 0 auto;
 		width: 95%;
 		//max-width: 1200px;
+	}
+
+	&__masthead {
+		margin-bottom: 2rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	&__menu {
+		margin-left: 1rem;
+
+		a {
+			color: rgba(black, 0.5);
+			text-decoration: none;
+
+			i {
+				margin-right: 0.25rem;
+			}
+		}
+	}
+
+	&__logo {
+		width: 22rem;
+		max-width: 90%;
+	}
+
+	&__bottom {
+		opacity: 0.5;
+		margin-top: 2rem;
+
+		a {
+			text-decoration: none;
+		}
 	}
 }
 
@@ -219,14 +260,14 @@ html,
 	$filters: &;
 	display: flex;
 	margin: 0 0 1rem;
+	flex-wrap: wrap;
 
 	&__filter {
+		margin-right: 0.5rem;
+
 		&--service {
 			display: flex;
-		}
-
-		& + & {
-			margin-left: 0.5rem;
+			flex-wrap: wrap;
 		}
 	}
 
@@ -236,10 +277,7 @@ html,
 		$padding: 0.5rem 1rem;
 		display: flex;
 		align-items: center;
-
-		& + & {
-			margin-left: 0.5rem;
-		}
+		margin: 0 0.5rem 0.5rem 0;
 
 		&--select {
 			select {
@@ -329,19 +367,6 @@ html,
 
 	&__empty {
 		text-align: center;
-	}
-}
-
-.bottom {
-	text-align: center;
-	opacity: 0.5;
-	width: 800px;
-	max-width: 95%;
-	margin: 0 auto;
-	margin-top: 2rem;
-
-	a {
-		text-decoration: none;
 	}
 }
 </style>
