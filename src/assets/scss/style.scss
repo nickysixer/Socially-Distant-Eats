@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:300,400,600,700&display=swap");
+
+@import "variables";
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: "Poppins", sans-serif;
+	font-weight: lighter;
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5 {
+		font-weight: bolder;
+	}
+
+	a {
+		color: $yellow;
+	}
+}
