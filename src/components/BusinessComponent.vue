@@ -22,11 +22,11 @@
         dt.business__info__label
             span Hours
             small(v-if="this.business.start_date")  (starting {{ this.business.start_date }})
-        dd.business__info__text {{ this.business.hours }}
+        dd.business__info__text(v-html="newLineIt(this.business.hours)")
 
     dl.business__info.business__info--specials(v-if="business.special_offers")
         dt.business__info__label Limited Time Offer
-        dd.business__info__text {{ business.special_offers }}
+        dd.business__info__text(v-html="newLineIt(business.special_offers)")
 
     .business__contact
         a.business__link.business__link--directions(:href="directionsLink", target="_blank")
@@ -50,7 +50,11 @@ export default Vue.extend({
 		business: Object as PropType<BusinessObject>
 	},
 
-	methods: {},
+	methods: {
+		newLineIt(text: string): string {
+			return text.replace(/\n/g, "<br/>");
+		}
+	},
 
 	computed: {
 		hasServices(): boolean {
@@ -112,7 +116,9 @@ export default Vue.extend({
 		directionsLink(): string {
 			return "https://www.google.com/maps/dir//" + this.singleLineAddress;
 		}
-	}
+	},
+
+	filters: {}
 });
 </script>
 
