@@ -1,8 +1,8 @@
 <template lang="pug">
 .business
-    header
+    header.business__overview
         h2.business__name {{ business.name }}
-        h4.business__offering {{ business.services }}
+        h5.business__location {{ business.city }}, {{ business.state }}
 
     .business__services(v-if="hasServices")
         .business__service.business__service--curbside(v-if="hasTakeout")
@@ -126,12 +126,15 @@ export default Vue.extend({
 	color: white;
 	border-radius: $spacing;
 
+	&__overview {
+	}
+
 	&__name {
 		margin: 0;
 		line-height: 1.3em;
 	}
 
-	&__offering {
+	&__location {
 		font-weight: normal;
 		margin: 0;
 	}
