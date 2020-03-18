@@ -37,11 +37,11 @@
                      button.btn(@click.prevent="reset") Clear Search
 
             .directory
-               masonry.directory__list(v-if="restaurants", :cols="{default: 3, 1024: 2, 680: 1}", :gutter="30")
+               masonry.directory__list(v-if="sortedList.length", :cols="{default: 3, 1024: 2, 680: 1}", :gutter="30")
                   .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
                      business-component(:business="restaurant")
                .directory__empty(v-else)
-                  h2 Sorry, we were unable to find any restaurants that matched your search.
+                  h2 Sorry, we were unable to find any restaurants that matched your search criteria. Give it another go.
                   button.btn(@click.prevent="reset") Reset Search
       footer.app__bottom
          span(v-html="attribution")
@@ -222,15 +222,13 @@ html,
 	}
 
 	&__masthead {
-		margin-bottom: 2rem;
+		margin-bottom: 1rem;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 	}
 
 	&__menu {
-		margin-left: 1rem;
-
 		a {
 			color: rgba(black, 0.5);
 			text-decoration: none;
@@ -244,6 +242,8 @@ html,
 	&__logo {
 		width: 22rem;
 		max-width: 90%;
+		margin: 0.5rem 0;
+		margin-right: 1rem;
 	}
 
 	&__bottom {
@@ -366,7 +366,6 @@ html,
 	}
 
 	&__empty {
-		text-align: center;
 	}
 }
 </style>
