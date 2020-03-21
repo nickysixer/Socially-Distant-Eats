@@ -56,7 +56,6 @@ export default Vue.extend({
 			isLoading: true,
 			restaurants: [] as Array<BusinessObject>,
 			sortBy: "name" as string,
-			filterBy: null as null | string,
 			filters: {
 				search: {
 					input: "" as string
