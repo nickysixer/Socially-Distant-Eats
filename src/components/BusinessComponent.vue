@@ -29,23 +29,51 @@
         dd.business__info__text(v-html="newLineIt(business.special_offers)")
 
     .business__contact
-        a.business__link.business__link--directions(:href="directionsLink", target="_blank")
+        a.business__link.business__link--directions(@click="click(directionsLink, true)")
             i.fad.fa-fw.fa-2x.fa-directions
             div Directions
-        a.business__link.business__link--phone(v-if="business.phone", :href="'tel:' + business.phone")
+        a.business__link.business__link--phone(v-if="business.phone", @click="click('tel:' + business.phone)")
             i.fad.fa-fw.fa-2x.fa-phone
             div Call
-        a.business__link.business__link--url(v-if="business.website", :href="business.website", target="_blank")
+        a.business__link.business__link--url(v-if="business.website", @click="click(business.website, true)")
             i.fad.fa-fw.fa-2x.fa-link
             div {{ hasOnlineOrdering ? 'Order Online' : 'Visit Site' }}
+    .business__share(v-if="clicked")
+        h4 Did you order some food from <b>{{ business.name }}</b>?
+        h5 Let everyone know!
+        social-sharing(:url="share.url", :title="share.title", :description="share.title", :quote="share.title", inline-template)
+            div
+                network.share-button(network="facebook")
+                    i.fab.fa-facebook-f
+                    span Share on Facebook
+                network.share-button(network="twitter")
+                    i.fab.fa-twitter
+                    span Share on Twitter
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
+import SocialSharing from "vue-social-sharing";
+
+Vue.use(SocialSharing);
+
 import BusinessObject from "../interfaces/business";
 
 export default Vue.extend({
+	data() {
+		return {
+			clicked: false as boolean,
+			share: {
+				title:
+					"I just order some food from " +
+					this.business.name +
+					"!\n\nJoin me in support our local restaurants during this difficult time at SociallyDistantEats.com",
+				url: "https://sociallydistanteats.com"
+			}
+		};
+	},
+
 	props: {
 		business: Object as PropType<BusinessObject>
 	},
@@ -53,6 +81,16 @@ export default Vue.extend({
 	methods: {
 		newLineIt(text: string): string {
 			return text.replace(/\n/g, "<br/>");
+		},
+
+		click(url: string, newWindow: boolean = false) {
+			this.clicked = true;
+
+			if (newWindow) {
+				//window.open(url);
+			} else {
+				//window.location.href = url;
+			}
 		}
 	},
 
@@ -122,7 +160,9 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+$blue: #3498db;
+
 .business {
 	$business: &;
 	$spacing: 1rem;
@@ -131,6 +171,7 @@ export default Vue.extend({
 	background-image: linear-gradient(45deg, #6610f2, #6f42c1);
 	color: white;
 	border-radius: $spacing;
+	overflow: hidden;
 
 	&__overview {
 	}
@@ -202,6 +243,45 @@ export default Vue.extend({
 
 			+ #{$business}__contact {
 				margin-top: 0;
+			}
+		}
+	}
+
+	&__share {
+		background-color: $blue;
+		margin-left: (-$spacing * 1.5);
+		margin-right: (-$spacing * 1.5);
+		padding: $spacing ($spacing * 1.5);
+		margin-top: $spacing * 1.5;
+		margin-bottom: -$spacing * 1.5;
+
+		h4 {
+			margin: 0;
+		}
+
+		h5 {
+			margin: 0 0 0.25rem;
+		}
+
+		.share-button {
+			border: 1px solid white;
+			border-radius: 100px;
+			padding: 0.25rem 1rem;
+			display: inline-block;
+			font-size: 0.8rem;
+			text-transform: uppercase;
+			font-weight: 500;
+			letter-spacing: 0.05rem;
+			margin: 0.5rem 0.5rem 0 0;
+			cursor: pointer;
+
+			i {
+				margin-right: 0.25rem;
+			}
+
+			&:hover {
+				background-color: white;
+				color: $blue;
 			}
 		}
 	}

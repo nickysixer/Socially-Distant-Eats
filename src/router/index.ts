@@ -3,7 +3,24 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter);
 
-const routes = [] as any;
+import HomeComponent from "@/views/Home.vue";
+
+const routes = [
+	{
+		path: "*",
+		component: HomeComponent
+	},
+	{
+		path: "/",
+		name: "home",
+		component: HomeComponent
+	},
+	{
+		path: "/city/:city_name/",
+		name: "city",
+		component: HomeComponent
+	}
+];
 
 const router = new VueRouter({
 	mode: "history",
