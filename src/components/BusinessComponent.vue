@@ -68,7 +68,7 @@ export default Vue.extend({
 				title:
 					"I just order some food from " +
 					this.business.name +
-					"!\n\nJoin me in support our local restaurants during this difficult time at SociallyDistantEats.com",
+					"!\n\nJoin me in supporting our local restaurants during this difficult time at SociallyDistantEats.com",
 				url: "https://sociallydistanteats.com"
 			}
 		};
@@ -87,9 +87,9 @@ export default Vue.extend({
 			this.clicked = true;
 
 			if (newWindow) {
-				//window.open(url);
+				window.open(url);
 			} else {
-				//window.location.href = url;
+				window.location.href = url;
 			}
 		}
 	},

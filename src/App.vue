@@ -4,9 +4,9 @@
             router-link.app__logo(to="/")
                 img(src="/images/SociallyDistantEatsLogo-Color.png")
             .app__menu
-                a(href="https://docs.google.com/forms/d/e/1FAIpQLSdZNyPhC_W2xBpN6_MjGofKJ893F7OExc1TCNgtAYpIYeC7oQ/viewform", target="_blank")
+                a.btn.btn--sm.btn--muted(href="https://docs.google.com/forms/d/e/1FAIpQLSdZNyPhC_W2xBpN6_MjGofKJ893F7OExc1TCNgtAYpIYeC7oQ/viewform", target="_blank")
                     i.fad.fa-plus-circle
-                    span Submit Your Business
+                    span Submit A Restaurant
         main.app__workbench
             router-view
         footer.app__bottom
@@ -57,7 +57,7 @@ html,
 
 	&__menu {
 		a {
-			color: rgba(black, 0.5);
+			//color: rgba(black, 0.5);
 			text-decoration: none;
 
 			i {

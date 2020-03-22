@@ -3,22 +3,22 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter);
 
-import HomeComponent from "@/views/Home.vue";
+import DirectoryComponent from "@/views/Directory.vue";
 
 const routes = [
 	{
 		path: "*",
-		component: HomeComponent
+		component: DirectoryComponent
 	},
 	{
 		path: "/",
 		name: "home",
-		component: HomeComponent
+		component: DirectoryComponent
 	},
 	{
 		path: "/city/:city_name/",
 		name: "city",
-		component: HomeComponent
+		component: DirectoryComponent
 	}
 ];
 
