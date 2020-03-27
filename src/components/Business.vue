@@ -29,7 +29,7 @@
         dd.business__info__text(v-html="newLineIt(business.special_offers)")
 
     .business__contact
-        a.business__link.business__link--directions(@click="click(directionsLink, true)")
+        a.business__link.business__link--directions(v-if="business.street_address", @click="click(directionsLink, true)")
             i.fad.fa-fw.fa-2x.fa-directions
             div Directions
         a.business__link.business__link--phone(v-if="business.phone", @click="click('tel:' + business.phone)")

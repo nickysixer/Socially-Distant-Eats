@@ -1,48 +1,50 @@
 <template lang="pug">
-    .directory
-        .directory__loading(v-if="isLoading")
-            h3
-               i.fad.fa-spin.fa-spinner
-               span Loading restaurants
-        template(v-else)
-            .directory__filters
-                .directory__filter.filter.filter--service
-                    label.filter__input.filter__input--checkbox
-                        input(v-model="filters.service.input", value="", type="radio", checked="true")
-                        span.filter__pill
-                            i.fad.fa-check-circle
-                            span All
-                    label.filter__input.filter__input--checkbox(v-for="(filter, key) in filters.service.options")
-                        input(v-model="filters.service.input", :value="key", type="radio", checked="true")
-                        span.filter__pill
-                            i.fad.fa-check-circle
-                            span {{ filter }}
-                .directory__filter.filter.filter--city
-                    .filter__input.filter__input--select
-                        select.filter__pill(v-model="filters.city.input", @change="goToCityPage()" type="search", placeholder="Search by name")
-                            option(value="") Filter by city
-                            option(v-for="(filter, key) in filters.city.options", :value="filter.toLowerCase()") {{ filter }}
-                .directory__filter.filter.filter--search
-                    .filter__input.filter__input--text
-                        input.filter__pill(v-model="filters.search.input", type="search", placeholder="Search by name")
-                .directory__filter.filter.filter--reset(v-if="isFiltered")
-                    .filter__input.filter__input--button
-                        button.filter__pill.filter__pill--btn(@click.prevent="reset") Clear Search
-
-            .directory__grid
-                masonry.directory__list(v-if="sortedList.length", :cols="{default: 3, 1024: 2, 680: 1}", :gutter="30")
-                    .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
-                        business-component(:business="restaurant")
-                .directory__empty(v-else)
-                    h2 Sorry, we were unable to find any restaurants that matched your search criteria. Give it another go.
-                    button.btn(@click.prevent="reset") Reset Search
+   .directory
+      .directory__loading(v-if="isLoading")
+         h3
+            i.fad.fa-spin.fa-spinner
+            span Loading restaurants
+      template(v-else)
+         .directory__filters
+            .directory__filter.filter.filter--service
+               label.filter__input.filter__input--checkbox
+                  input(v-model="filters.service.input", value="", type="radio", checked="true")
+                  span.filter__pill
+                     i.fad.fa-check-circle
+                     span All
+               label.filter__input.filter__input--checkbox(v-for="(filter, key) in filters.service.options")
+                  input(v-model="filters.service.input", :value="key", type="radio", checked="true")
+                  span.filter__pill
+                     i.fad.fa-check-circle
+                     span {{ filter }}
+            .directory__filter.filter.filter--city
+               .filter__input.filter__input--select
+                  select.filter__pill(v-model="filters.city.input", @change="goToCityPage()" type="search", placeholder="Search by name")
+                     option(value="") Filter by city
+                     option(v-for="(filter, key) in filters.city.options", :value="filter.toLowerCase()") {{ filter }}
+            .directory__filter.filter.filter--search
+               .filter__input.filter__input--text
+                  input.filter__pill(v-model="filters.search.input", type="search", placeholder="Search by name")
+            .directory__filter.filter.filter--reset(v-if="isFiltered")
+               .filter__input.filter__input--button
+                  button.filter__pill.filter__pill--btn(@click.prevent="reset") Clear Search
+         .directory__grid
+            masonry.directory__list(v-if="sortedList.length", :class="{ 'directory__list--with-map': showMap }", :cols="{ default: showMap ? 1 : 3, 1024: showMap ? 1 : 2, 680: 1 }", :gutter="showMap ? 0 : 30")
+               .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
+                  business(:business="restaurant")
+            .directory__map
+               mapbox(:markers="filteredList", :center="{ lat: 40.4173, lng: -82.9071 }", name="mapbox")
+      .directory__empty(v-else)
+         h2 Sorry, we were unable to find any restaurants that matched your search criteria. Give it another go.
+         button.btn(@click.prevent="reset") Reset Search
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
 import BusinessObject from "@/interfaces/business";
-import BusinessComponent from "@/components/BusinessComponent.vue";
+import BusinessComponent from "@/components/Business.vue";
+import MapComponent from "@/components/Map.vue";
 
 import _ from "lodash";
 import tabletop from "tabletop";
@@ -53,6 +55,7 @@ Vue.use(VueMasonry);
 export default Vue.extend({
 	data() {
 		return {
+			showMap: true,
 			isLoading: true,
 			restaurants: [] as Array<BusinessObject>,
 			sortBy: "name" as string,
@@ -191,7 +194,8 @@ export default Vue.extend({
 	filters: {},
 
 	components: {
-		"business-component": BusinessComponent
+		business: BusinessComponent,
+		mapbox: MapComponent
 	}
 });
 </script>
@@ -199,8 +203,11 @@ export default Vue.extend({
 <style lang="scss" scoped>
 $green: #20c997;
 $orange: #fd7e14;
+$map-height: 800px;
 
 .directory {
+	$grid-padding: 1.5rem;
+
 	&__filters {
 		display: flex;
 		margin: 0 0 1rem;
@@ -209,9 +216,9 @@ $orange: #fd7e14;
 	}
 
 	&__grid {
-		$padding: 1.5rem;
 		flex: 1;
 		width: 100%;
+		display: flex;
 	}
 
 	&__list {
@@ -221,6 +228,19 @@ $orange: #fd7e14;
 		list-style: none;
 		//column-count: 3;
 		gap: 1.5rem;
+		flex: 1;
+
+		&--with-map {
+			height: $map-height;
+			overflow: scroll;
+			border-radius: 1rem;
+		}
+	}
+
+	&__map {
+		height: $map-height;
+		width: 66.666%;
+		margin-left: $grid-padding;
 	}
 
 	&__item {

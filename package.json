@@ -8,6 +8,7 @@
 		"lint": "vue-cli-service lint"
 	},
 	"dependencies": {
+		"@types/googlemaps": "^3.39.3",
 		"@types/lodash": "^4.14.149",
 		"canvas-confetti": "^1.1.1",
 		"core-js": "^3.6.4",
