@@ -9,4 +9,7 @@ export default interface BusinessObject {
 	other_services: string;
 	delivery: string;
 	online_ordering: string;
+	latitude: string;
+	longitude: string;
+	distance: string;
 }
