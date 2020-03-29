@@ -1,54 +1,56 @@
 <template lang="pug">
-.business
-    header.business__overview
-        h2.business__name {{ business.name }}
-        h5.business__location {{ business.city }}, {{ business.state }}
+.business(:class="'business--layout-' + layout")
+   header.business__overview
+      h2.business__name {{ business.name }}
+      h5.business__location
+         span {{ business.city }}, {{ business.state }}
+         span(v-if="distance")  ({{ distance }} miles away)
 
-    .business__services(v-if="hasServices")
-        .business__service.business__service--curbside(v-if="hasTakeout")
-            i.fad.fa-check-circle
-            span Takeout
-        .business__service.business__service--curbside(v-if="hasCurbsidePickup")
-            i.fad.fa-check-circle
-            span Curbside Pick-up
-        .business__service.business__service--curbside(v-if="hasDelivery")
-            i.fad.fa-check-circle
-            span Delivery
-        .business__service.business__service--curbside(v-if="hasOnlineOrdering")
-            i.fad.fa-check-circle
-            span Online Ordering
+   .business__services(v-if="hasServices")
+      .business__service.business__service--curbside(v-if="hasTakeout")
+         i.fad.fa-check-circle
+         span Takeout
+      .business__service.business__service--curbside(v-if="hasCurbsidePickup")
+         i.fad.fa-check-circle
+         span Curbside Pick-up
+      .business__service.business__service--curbside(v-if="hasDelivery")
+         i.fad.fa-check-circle
+         span Delivery
+      .business__service.business__service--curbside(v-if="hasOnlineOrdering")
+         i.fad.fa-check-circle
+         span Online Ordering
 
-    dl.business__info.business__info--hours(v-if="this.business.hours")
-        dt.business__info__label
-            span Hours
-            small(v-if="this.business.start_date")  (starting {{ this.business.start_date }})
-        dd.business__info__text(v-html="newLineIt(this.business.hours)")
+   dl.business__info.business__info--hours(v-if="this.business.hours")
+      dt.business__info__label
+         span Hours
+         small(v-if="this.business.start_date")  (starting {{ this.business.start_date }})
+      dd.business__info__text(v-html="newLineIt(this.business.hours)")
 
-    dl.business__info.business__info--specials(v-if="business.special_offers")
-        dt.business__info__label Limited Time Offer
-        dd.business__info__text(v-html="newLineIt(business.special_offers)")
+   dl.business__info.business__info--specials(v-if="business.special_offers")
+      dt.business__info__label Limited Time Offer
+      dd.business__info__text(v-html="newLineIt(business.special_offers)")
 
-    .business__contact
-        a.business__link.business__link--directions(v-if="business.street_address", @click="click(directionsLink, true)")
-            i.fad.fa-fw.fa-2x.fa-directions
-            div Directions
-        a.business__link.business__link--phone(v-if="business.phone", @click="click('tel:' + business.phone)")
-            i.fad.fa-fw.fa-2x.fa-phone
-            div Call
-        a.business__link.business__link--url(v-if="business.website", @click="click(business.website, true)")
-            i.fad.fa-fw.fa-2x.fa-link
-            div {{ hasOnlineOrdering ? 'Order Online' : 'Visit Site' }}
-    .business__share(v-if="clicked")
-        h4 Did you order some food from <b>{{ business.name }}</b>?
-        h5 Let everyone know!
-        social-sharing(:url="share.url", :title="share.title", :description="share.title", :quote="share.title", inline-template)
-            div
-                network.share-button(network="facebook")
-                    i.fab.fa-facebook-f
-                    span Share on Facebook
-                network.share-button(network="twitter")
-                    i.fab.fa-twitter
-                    span Share on Twitter
+   .business__contact
+      a.business__link.business__link--directions(v-if="business.street_address", @click="click(directionsLink, true)")
+         i.fad.fa-fw.fa-2x.fa-directions
+         div Directions
+      a.business__link.business__link--phone(v-if="business.phone", @click="click('tel:' + business.phone)")
+         i.fad.fa-fw.fa-2x.fa-phone
+         div Call
+      a.business__link.business__link--url(v-if="business.website", @click="click(business.website, true)")
+         i.fad.fa-fw.fa-2x.fa-link
+         div {{ hasOnlineOrdering ? 'Order Online' : 'Visit Site' }}
+   .business__share(v-if="clicked")
+      h4 Did you order some food from <b>{{ business.name }}</b>?
+      h5 Let everyone know!
+      social-sharing(:url="share.url", :title="share.title", :description="share.title", :quote="share.title", inline-template)
+         div
+            network.share-button(network="facebook")
+               i.fab.fa-facebook-f
+               span Share on Facebook
+            network.share-button(network="twitter")
+               i.fab.fa-twitter
+               span Share on Twitter
 </template>
 
 <script lang="ts">
@@ -75,7 +77,8 @@ export default Vue.extend({
 	},
 
 	props: {
-		business: Object as PropType<BusinessObject>
+		business: Object as PropType<BusinessObject>,
+		layout: String
 	},
 
 	methods: {
@@ -95,6 +98,12 @@ export default Vue.extend({
 	},
 
 	computed: {
+		distance(): null | string {
+			return this.business.distance
+				? parseFloat(this.business.distance).toFixed(2)
+				: null;
+		},
+
 		hasServices(): boolean {
 			return (
 				this.hasTakeout ||
@@ -283,6 +292,12 @@ $blue: #3498db;
 				background-color: white;
 				color: $blue;
 			}
+		}
+	}
+
+	&--layout-infowindow {
+		#{$business}__services {
+			font-size: 1rem;
 		}
 	}
 }
