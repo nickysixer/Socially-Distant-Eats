@@ -1,10 +1,14 @@
 <template lang="pug">
 .business(:class="'business--layout-' + layout")
    header.business__overview
-      h2.business__name {{ business.name }}
-      h5.business__location
-         span {{ business.city }}, {{ business.state }}
-         span(v-if="distance")  ({{ distance }} miles away)
+      .business__details
+         h2.business__name {{ business.name }}
+         h5.business__location
+            span {{ business.city }}, {{ business.state }}
+            span(v-if="distance")  ({{ distance }} miles away)
+      .business__actions
+         a.business__favorite(@click.prevent="setFavorite", :class="{ 'business__favorite--active': isFavorite }")
+            i.far.fa-star(:class="{ 'fas': isFavorite }")
 
    .business__services(v-if="hasServices")
       .business__service.business__service--curbside(v-if="hasTakeout")
@@ -56,6 +60,8 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 
+import data from "@/data";
+
 import SocialSharing from "vue-social-sharing";
 
 Vue.use(SocialSharing);
@@ -65,6 +71,7 @@ import BusinessObject from "../interfaces/business";
 export default Vue.extend({
 	data() {
 		return {
+			favorite: false,
 			clicked: false as boolean,
 			share: {
 				title:
@@ -94,10 +101,18 @@ export default Vue.extend({
 			} else {
 				window.location.href = url;
 			}
+		},
+
+		setFavorite() {
+			this.$emit("favorite", this.business);
 		}
 	},
 
 	computed: {
+		isFavorite(): boolean {
+			return this.favorite;
+		},
+
 		distance(): null | string {
 			return this.business.distance
 				? parseFloat(this.business.distance).toFixed(2)
@@ -170,29 +185,42 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-$blue: #3498db;
-
 .business {
 	$business: &;
 	$spacing: 1rem;
 	background-color: darken(white, 5);
 	padding: $spacing * 1.5;
-	background-image: linear-gradient(45deg, #6610f2, #6f42c1);
+	background-image: linear-gradient(115deg, darken($purple, 12), $purple);
 	color: white;
 	border-radius: $spacing;
 	overflow: hidden;
 
 	&__overview {
+		display: flex;
 	}
 
 	&__name {
-		margin: 0;
+		margin: -0.1rem 0 0;
 		line-height: 1.3em;
 	}
 
 	&__location {
 		font-weight: normal;
 		margin: 0;
+	}
+
+	&__actions {
+		margin-left: auto;
+	}
+
+	&__favorite {
+		color: rgba($black, 0.35);
+		font-size: 1.2rem;
+		cursor: pointer;
+
+		&--active {
+			color: $yellow;
+		}
 	}
 
 	&__services {

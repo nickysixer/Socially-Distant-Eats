@@ -42,7 +42,7 @@
                mapbox(@geolocate="setGeolocation", :filtered-restaurants="filteredList", :all-restaurants="activeList", :center="{ lat: 40.4173, lng: -82.9071 }", name="mapbox")
             masonry.directory__list(v-if="!!sortedList.length", :key="viewMode" :class="{ 'directory__list--with-map': showMap }", :cols="{ default: showMap ? 1 : 3, 1024: showMap ? 1 : 2, 680: 1 }", :gutter="showMap ? 0 : 30", ref="directory-list")
                .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
-                  business(:business="restaurant", layout="default")
+                  business(@favorite="setFavorite", :business="restaurant", layout="default")
             .directory__empty(v-else)
                h2 Sorry, we were unable to find any restaurants that matched your search criteria. Give it another go.
                button.btn(@click.prevent="reset") Reset Search
@@ -50,6 +50,10 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
+
+import firebase from "firebase";
+import data from "@/global/data";
+import user from "@/global/user";
 
 import BusinessObject from "@/interfaces/business";
 import BusinessComponent from "@/components/Business.vue";
@@ -166,6 +170,16 @@ export default Vue.extend({
 			}
 
 			return dist;
+		},
+
+		setFavorite(business: BusinessObject) {
+			user.isLoggedIn(true)
+				.then((foundUser: firebase.User) => {
+					data.getUsersFavorites(foundUser);
+				})
+				.catch(error => {
+					alert("There was an error logging in: " + error);
+				});
 		}
 	},
 
