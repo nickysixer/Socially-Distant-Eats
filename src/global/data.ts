@@ -24,11 +24,12 @@ const data = {
 				.where("email", "==", user.email)
 				.get()
 				.then((snapshot: firebase.firestore.QuerySnapshot) => {
-					if (snapshot.empty) {
-					} else {
+					if (!snapshot.empty) {
 						snapshot.forEach((doc: firebase.firestore.DocumentData) => {
 							console.log(doc, doc.data());
 						});
+					} else if() {
+						
 					}
 				});
 		}
