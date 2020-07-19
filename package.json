@@ -13,7 +13,7 @@
 		"canvas-confetti": "^1.1.1",
 		"core-js": "^3.6.4",
 		"font-awesome": "^4.7.0",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.19",
 		"moment": "^2.24.0",
 		"tabletop": "^1.6.2",
 		"vue": "^2.6.10",
