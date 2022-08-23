@@ -15,7 +15,7 @@
 		"core-js": "^3.6.4",
 		"font-awesome": "^4.7.0",
 		"lodash": "^4.17.15",
-		"moment": "^2.24.0",
+		"moment": "^2.29.4",
 		"tabletop": "^1.6.2",
 		"vue": "^2.6.10",
 		"vue-class-component": "^7.2.3",
