@@ -1,51 +1,102 @@
 <template lang="pug">
-   .directory
-      .directory__loading(v-if="isLoading")
-         h3
-            i.fad.fa-spin.fa-spinner
-            span Loading restaurants
-      template(v-else)
-         .directory__filters
-            .directory__filter.filter.filter--view
-               .filter__input
-                  .filter__pill
-                     .filter__choice
-                        input(v-model="viewMode", value="map", id="view-map", name="view", type="radio")
-                        label.filter__label(for="view-map") Map View
-                     .filter__choice
-                        input(v-model="viewMode", value="list", id="view-list", name="view", type="radio")
-                        label.filter__label(for="view-list") List View
-            .directory__filter.filter.filter--service
-               label.filter__input.filter__input--checkbox
-                  input(v-model="filters.service.input", value="", type="radio", checked="true")
-                  span.filter__pill
-                     i.fad.fa-check-circle
-                     span All
-               label.filter__input.filter__input--checkbox(v-for="(filter, key) in filters.service.options")
-                  input(v-model="filters.service.input", :value="key", type="radio", checked="true")
-                  span.filter__pill
-                     i.fad.fa-check-circle
-                     span {{ filter }}
-            .directory__filter.filter.filter--city
-               .filter__input.filter__input--select
-                  select.filter__pill(v-model="filters.city.input", @change="goToCityPage()" type="search", placeholder="Search by name")
-                     option(value="") Filter by city
-                     option(v-for="(filter, key) in filters.city.options", :value="filter.toLowerCase()") {{ filter }}
-            .directory__filter.filter.filter--search
-               .filter__input.filter__input--text
-                  input.filter__pill(v-model="filters.search.input", type="search", placeholder="Search by name")
-            .directory__filter.filter.filter--reset(v-if="isFiltered")
-               .filter__input.filter__input--button
-                  button.filter__pill.filter__pill--btn(@click.prevent="reset") Reset
-         .directory__grid
-            .directory__map(v-if="!!sortedList.length && showMap")
-               mapbox(@geolocate="setGeolocation", :filtered-restaurants="filteredList", :all-restaurants="activeList", :center="{ lat: 40.4173, lng: -82.9071 }", name="mapbox")
-            masonry.directory__list(v-if="!!sortedList.length", :key="viewMode" :class="{ 'directory__list--with-map': showMap }", :cols="{ default: showMap ? 1 : 3, 1024: showMap ? 1 : 2, 680: 1 }", :gutter="showMap ? 0 : 30", ref="directory-list")
-               .directory__item(v-for="(restaurant, index) in sortedList", v-if="!!restaurant.name" :key="restaurant.name")
-                  business(:business="restaurant", layout="default")
-            .directory__empty(v-else)
-               h2 Sorry, we were unable to find any restaurants that matched your search criteria. Give it another go.
-               button.btn(@click.prevent="reset") Reset Search
+.directory
+	.directory__loading(v-if="isLoading")
+		h3
+			i.fad.fa-spin.fa-spinner
+			span Loading restaurants
+	template(v-else)
+		.directory__filters
+			.directory__filter.filter.filter--view
+				.filter__input
+					.filter__pill
+						.filter__choice
+							input#view-map(
+								v-model="viewMode",
+								value="map",
+								name="view",
+								type="radio"
+							)
+							label.filter__label(for="view-map") Map View
+						.filter__choice
+							input#view-list(
+								v-model="viewMode",
+								value="list",
+								name="view",
+								type="radio"
+							)
+							label.filter__label(for="view-list") List View
+			.directory__filter.filter.filter--service
+				label.filter__input.filter__input--checkbox
+					input(
+						v-model="filters.service.input",
+						value="",
+						type="radio",
+						checked="true"
+					)
+					span.filter__pill
+						i.fad.fa-check-circle
+						span All
+				label.filter__input.filter__input--checkbox(
+					v-for="(filter, key) in filters.service.options"
+				)
+					input(
+						v-model="filters.service.input",
+						:value="key",
+						type="radio",
+						checked="true"
+					)
+					span.filter__pill
+						i.fad.fa-check-circle
+						span {{ filter }}
+			.directory__filter.filter.filter--city
+				.filter__input.filter__input--select
+					select.filter__pill(
+						v-model="filters.city.input",
+						@change="goToCityPage()",
+						type="search",
+						placeholder="Search by name"
+					)
+						option(value="") Filter by city
+						option(
+							v-for="(filter, key) in filters.city.options",
+							:value="filter.toLowerCase()"
+						) {{ filter }}
+			.directory__filter.filter.filter--search
+				.filter__input.filter__input--text
+					input.filter__pill(
+						v-model="filters.search.input",
+						type="search",
+						placeholder="Search by name"
+					)
+			.directory__filter.filter.filter--reset(v-if="isFiltered")
+				.filter__input.filter__input--button
+					button.filter__pill.filter__pill--btn(@click.prevent="reset") Reset
+		.directory__grid
+			.directory__map(v-if="!!sortedList.length && showMap")
+				mapbox(
+					@geolocate="setGeolocation",
+					:filtered-restaurants="filteredList",
+					:all-restaurants="activeList",
+					:center="{ lat: 40.4173, lng: -82.9071 }",
+					name="mapbox"
+				)
+			masonry.directory__list(
+				v-if="!!sortedList.length",
+				:key="viewMode",
+				:class="{ 'directory__list--with-map': showMap }",
+				:cols="{ default: showMap ? 1 : 3, 1024: showMap ? 1 : 2, 680: 1 }",
+				:gutter="showMap ? 0 : 30",
+				ref="directory-list"
+			)
+				.directory__item(
+					v-for="(restaurant, index) in sortedList",
+					v-if="!!restaurant.name",
+					:key="restaurant.name"
+				)
+					business(:business="restaurant", layout="default")
+			.directory__empty(v-else)
+				h2 Sorry, we were unable to find any restaurants that matched your search criteria. Give it another go.
+				button.btn(@click.prevent="reset") Reset Search
 </template>
 
 <script lang="ts">
@@ -57,6 +108,7 @@ import MapComponent from "@/components/Map.vue";
 
 import _ from "lodash";
 import tabletop from "tabletop";
+import axios from "axios";
 import VueMasonry from "vue-masonry-css";
 
 Vue.use(VueMasonry);
@@ -70,32 +122,35 @@ export default Vue.extend({
 			sortBy: "name" as string,
 			filters: {
 				search: {
-					input: "" as string
+					input: "" as string,
 				},
 				service: {
 					input: "" as string,
 					options: {
 						curbside_pickup: "Curbside Pickup",
 						delivery: "Delivery",
-						online_ordering: "Online Ordering"
-					}
+						online_ordering: "Online Ordering",
+					},
 				},
 				city: {
 					input: "" as string,
-					options: [] as Array<string>
-				}
+					options: [] as Array<string>,
+				},
 			},
-			selectedFilters: [] as Array<string>
+			selectedFilters: [] as Array<string>,
 		};
 	},
 
 	created() {
-		tabletop.init({
-			key:
-				"https://docs.google.com/spreadsheets/d/14nyJoAv4dpZEYyqZiToDXY2qdaVpW0SeaNVVnLLnegY/edit#gid=0",
-			callback: this.loadData,
-			simpleSheet: false
-		});
+		axios
+			.get(
+				"https://api.sheety.co/4a947fe924bd34d44b5c0563c89731e9/sociallyDistantEatsCom/restaurants"
+			)
+			.then((resp) => {
+				if (!!resp.data) {
+					this.loadData(resp.data);
+				}
+			});
 	},
 
 	mounted() {
@@ -105,8 +160,8 @@ export default Vue.extend({
 	},
 
 	methods: {
-		loadData(data: any, tabletop: any) {
-			const restaurants = data.restaurants.elements;
+		loadData(data: any) {
+			const restaurants = data.restaurants;
 			this.restaurants = restaurants;
 			this.isLoading = false;
 		},
@@ -166,7 +221,7 @@ export default Vue.extend({
 			}
 
 			return dist;
-		}
+		},
 	},
 
 	computed: {
@@ -197,7 +252,7 @@ export default Vue.extend({
 				if (this.sortBy === "name") {
 					list = _.sortBy(list, ["name"]);
 				} else if (this.sortBy === "distance") {
-					list = list.sort(function(a, b) {
+					list = list.sort(function (a, b) {
 						return parseFloat(a.distance) - parseFloat(b.distance);
 					});
 				}
@@ -239,15 +294,13 @@ export default Vue.extend({
 			if (this.restaurants) {
 				const restaurants: Array<BusinessObject> = this.restaurants;
 				const uniqueCities: Array<string> = [
-					...new Set(
-						restaurants.map((item: BusinessObject) => item.city)
-					)
+					...new Set(restaurants.map((item: BusinessObject) => item.city)),
 				];
 				return uniqueCities.sort();
 			}
 
 			return [];
-		}
+		},
 	},
 
 	watch: {
@@ -259,15 +312,15 @@ export default Vue.extend({
 			this.filters.city.input = to.params.city_name
 				? to.params.city_name
 				: "";
-		}
+		},
 	},
 
 	filters: {},
 
 	components: {
 		business: BusinessComponent,
-		mapbox: MapComponent
-	}
+		mapbox: MapComponent,
+	},
 });
 </script>
 
